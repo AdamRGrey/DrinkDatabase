@@ -31,11 +31,13 @@ namespace DrinkDatabase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Drink drink = await db.Drinks.FindAsync(id);
+            Drink drink = await db.Drinks.Include(d => d.DrinkIngredients).Where(d => d.ID == id).SingleAsync();
             if (drink == null)
             {
                 return HttpNotFound();
             }
+            
+            ViewBag.DrinkIngredients = drink.DrinkIngredients;
             return View(drink);
         }
 
@@ -69,12 +71,22 @@ namespace DrinkDatabase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Drink drink = await db.Drinks.FindAsync(id);
-            if (drink == null)
+            Drink drinkToUpdate = await db.Drinks
+                .Include(d => d.DrinkIngredients)
+                .Where(d => d.ID == id)
+                .SingleAsync();
+            if (drinkToUpdate == null)
             {
                 return HttpNotFound();
             }
-            return View(drink);
+            ViewBag.DisgustingDebugNote = "no it's fine";
+            if (drinkToUpdate.DrinkIngredients == null)
+            {
+                drinkToUpdate.DrinkIngredients = new HashSet<DrinkIngredient>();
+                ViewBag.DisgustingDebugNote = "yes I had to add a new set";
+            }
+            ViewBag.DrinkIngredients = drinkToUpdate.DrinkIngredients;
+            return View(drinkToUpdate);
         }
 
         // POST: Drink/Edit/5
@@ -117,6 +129,63 @@ namespace DrinkDatabase.Controllers
             db.Drinks.Remove(drink);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+        public async Task<ActionResult> AddIngredient(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Drink drink = await db.Drinks.FindAsync(id);
+            if (drink == null)
+            {
+                return HttpNotFound();
+            }
+            var ingredients = db.Ingredients.OrderBy(q => q.Name).ToList();
+            SelectList holdThis = new SelectList(ingredients, "ID", "Name", null);
+            ViewData.Add("ingredientID", holdThis.AsEnumerable());
+            //ViewBag.SelectedIngredient = holdThis;
+            return View(drink);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddIngredient(int id, int ingredientID)
+        {
+            Drink drink = await db.Drinks.FindAsync(id);
+            if (drink == null)
+                return HttpNotFound();
+
+            Ingredient ingredient = await db.Ingredients.FirstAsync(i => i.ID == ingredientID);
+            if (ingredient == null)
+                return HttpNotFound();
+
+            if (drink.DrinkIngredients.Any(di => di.IngredientID == ingredient.ID))
+                return new HttpStatusCodeResult(HttpStatusCode.Conflict);
+
+            drink.DrinkIngredients.Add(new DrinkIngredient()
+            {
+                DrinkID = id,
+                IngredientID = ingredient.ID
+            });
+            await db.SaveChangesAsync();
+
+            return RedirectToAction("Drink/Edit/" + id);
+        }
+        [AllowAnonymous]
+        public ActionResult DrinkIngredientDetails(int? id)
+        {
+            if (id == null)
+                return HttpNotFound();
+            DrinkIngredient di = db.DrinkIngredients.Find(id);
+            if (di == null)
+                return HttpNotFound();
+            
+            var ingredient = db.Ingredients.Find(di.IngredientID);
+            if (ingredient == null)
+                return HttpNotFound();
+            ViewBag.ingredientName = ingredient.Name;
+
+            return PartialView(di);
         }
 
         protected override void Dispose(bool disposing)

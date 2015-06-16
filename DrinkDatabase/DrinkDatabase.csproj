@@ -242,6 +242,9 @@
     <Content Include="Views\Ingredient\Details.cshtml" />
     <Content Include="Views\Ingredient\Edit.cshtml" />
     <Content Include="Views\Ingredient\Index.cshtml" />
+    <Content Include="Views\Drink\AddIngredient.cshtml" />
+    <Content Include="Views\Drink\DrinkIngredientDetails.cshtml" />
+    <Content Include="Views\Drink\DrinkIngredientEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

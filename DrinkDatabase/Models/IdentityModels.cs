@@ -33,5 +33,7 @@ namespace DrinkDatabase.Models
         public System.Data.Entity.DbSet<DrinkDatabase.Models.Drink> Drinks { get; set; }
 
         public System.Data.Entity.DbSet<DrinkDatabase.Models.Ingredient> Ingredients { get; set; }
+
+        public System.Data.Entity.DbSet<DrinkDatabase.Models.DrinkIngredient> DrinkIngredients { get; set; }
     }
 }

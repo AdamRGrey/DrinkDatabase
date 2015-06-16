@@ -1,0 +1,15 @@
+﻿@model DrinkDatabase.Models.DrinkIngredient
+<div class="row">
+    <div class="col-md-2">
+        @Html.EditorFor(model => model.Brand)
+    </div>
+
+    <div class="col-md-2">
+        @*TODO: ingredient dropdown*@
+        @ViewBag.ingredientName
+    </div>
+
+    <div class="col-md-2">
+        @Html.EditorFor(model => model.Amount)
+    </div>
+</div>

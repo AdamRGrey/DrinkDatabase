@@ -1,0 +1,14 @@
+﻿@model DrinkDatabase.Models.DrinkIngredient
+<div class="row">
+    <div class="col-md-2">
+        @Html.DisplayTextFor(model => model.Brand)
+    </div>
+
+    <div class="col-md-2">
+        @ViewBag.ingredientName
+    </div>
+
+    <div class="col-md-2">
+        @Html.DisplayTextFor(model => model.Amount)
+    </div>
+</div>

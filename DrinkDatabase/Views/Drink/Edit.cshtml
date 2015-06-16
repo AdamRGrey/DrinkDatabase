@@ -24,7 +24,24 @@
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
         </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @*do not try to add a label. Just don't.*@
+                <table>
+                    @{
+                        HashSet<DrinkDatabase.Models.DrinkIngredient> ings = ViewBag.DrinkIngredients;
+                        <tr><th>brand</th><th>ingredient</th><th>amount</th></tr>
+                        foreach (var item in ings)
+                        {
+                            //TODO: edit controls for DrinkIngredients
+                            
+                        }
+                    }
+                    <tr><td>@Html.ActionLink("add new", "AddIngredient", new { id = Model.ID})</td><td></td><td></td></tr>
+                </table>
+            </div>
 
+        </div>
         <div class="form-group">
             @Html.LabelFor(model => model.Instructions, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">

@@ -40,7 +40,7 @@ namespace DrinkDatabase.Migrations
                         Brand = c.String(),
                     })
                 .PrimaryKey(t => t.ID)
-                .ForeignKey("dbo.Ingredients", t=>t.IngredientID, cascadeDelete:false)
+                .ForeignKey("dbo.Ingredients", t=>t.IngredientID, cascadeDelete:true)
                 .ForeignKey("dbo.Drinks", t => t.DrinkID, cascadeDelete: true)
                 .Index(t => t.DrinkID);
             

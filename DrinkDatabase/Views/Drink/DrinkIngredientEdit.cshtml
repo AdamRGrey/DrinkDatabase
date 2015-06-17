@@ -3,7 +3,7 @@
     @Html.Hidden("DrinkIngredients.index", Model.ID)
     @Html.Hidden("DrinkIngredients[" + Model.ID + "].ID", Model.ID)
     @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkID", Model.DrinkID)
-    @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkIngredientID", Model.ID);
+    @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkIngredientID", Model.ID)
     <div class="col-md-3">
         @Html.EditorFor(model => model.Brand, null, "DrinkIngredients[" + Model.ID + "].Brand")
         @Html.ValidationMessageFor(model => model.Brand, "", new { @class = "text-danger" })

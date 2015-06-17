@@ -95,13 +95,37 @@ namespace DrinkDatabase.Controllers
         public async Task<ActionResult> Edit([Bind(Include = "ID,Name,Instructions,Glass,Notes")] Drink drink,
             [Bind(Include= "ID,Amount,Brand,IngredientID,DrinkID")] IEnumerable<DrinkIngredient> DrinkIngredients)
         {
+            
             if (ModelState.IsValid)
             {
-                db.Entry(drink).State = EntityState.Modified;
-                if(DrinkIngredients != null)
-                    foreach (var item in DrinkIngredients)
-                        db.Entry(item).State = EntityState.Modified;
+                var whichToDelete = Request.Form.AllKeys.Where(s => s.Contains("DeleteDrinkIngredients["));
+                List<int> deletionList = new List<int>();
+                foreach (var s in whichToDelete)
+                {
+                    var firstBracket = s.IndexOf('[') + 1;
+                    int thisIndex;
+                    if (int.TryParse(s.Substring(firstBracket, s.IndexOf(']', firstBracket) - firstBracket), out thisIndex))
+                    {
+                        if(Request.Form[s] == "on")
+                            deletionList.Add(thisIndex);
+                    }
+                }
 
+                db.Entry(drink).State = EntityState.Modified;
+                if (DrinkIngredients != null)
+                {
+                    foreach (var item in DrinkIngredients)
+                    {
+                        if(deletionList.Contains(item.ID))
+                        {
+                            db.Entry(item).State = EntityState.Deleted;
+                        }
+                        else
+                        {
+                            db.Entry(item).State = EntityState.Modified;
+                        }
+                    }
+                }
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -208,17 +232,6 @@ namespace DrinkDatabase.Controllers
             ViewData.Add("DrinkIngredients[" + id + "].ingredientID", holdThis.AsEnumerable());
             
             return PartialView(di);
-        }
-
-        public ActionResult DeleteIngredient(int? DrinkIngredientID, int? DrinkID)
-        {
-            var DI = db.DrinkIngredients.Find(DrinkIngredientID);
-            if (DI == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            db.DrinkIngredients.Remove(DI);
-            db.SaveChanges();
-
-            return RedirectToAction("Edit/" + DrinkID);
         }
 
         protected override void Dispose(bool disposing)

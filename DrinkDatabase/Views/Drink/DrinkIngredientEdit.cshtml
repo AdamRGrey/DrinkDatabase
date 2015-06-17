@@ -3,6 +3,7 @@
     @Html.Hidden("DrinkIngredients.index", Model.ID)
     @Html.Hidden("DrinkIngredients[" + Model.ID + "].ID", Model.ID)
     @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkID", Model.DrinkID)
+    @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkIngredientID", Model.ID);
     <div class="col-md-3">
         @Html.EditorFor(model => model.Brand, null, "DrinkIngredients[" + Model.ID + "].Brand")
         @Html.ValidationMessageFor(model => model.Brand, "", new { @class = "text-danger" })
@@ -17,11 +18,10 @@
         @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
     </div>
     <div class="col-md-1">
-        @using (Html.BeginForm("DeleteIngredient", "Drink"))
-        {
-            @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkIngredientID", Model.ID);
-            @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkID", Model.DrinkID);
-            <input type="submit" value="X" class="btn" />
+        @Html.Hidden("DeleteDrinkIngredients.index", Model.ID)
+        @{
+            var cbName="DeleteDrinkIngredients[" + Model.ID + "].Value";
+            @:<input type="checkbox" name=@cbName />
         }
     </div>
 </div>

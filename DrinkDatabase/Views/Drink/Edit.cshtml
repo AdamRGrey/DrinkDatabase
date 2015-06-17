@@ -27,18 +27,15 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 @*do not try to add a label. Just don't.*@
-                <table>
                     @{
                         HashSet<DrinkDatabase.Models.DrinkIngredient> ings = ViewBag.DrinkIngredients;
-                        <tr><th>brand</th><th>ingredient</th><th>amount</th></tr>
+                        <div class="row"><div class="col-md-3 di-header">Brand</div><div class="col-md-3 di-header">Name</div><div class="col-md-3 di-header">Amount</div><div class="col-md-1 di-header">Delete</div></div>
                         foreach (var item in ings)
                         {
-                            //TODO: edit controls for DrinkIngredients
-                            
+                            @Html.Action("DrinkIngredientEdit", new { id = item.ID });
                         }
                     }
-                    <tr><td>@Html.ActionLink("add new", "AddIngredient", new { id = Model.ID})</td><td></td><td></td></tr>
-                </table>
+                    <div class="row">@Html.ActionLink("add new", "AddIngredient", new { id = Model.ID})</div>
             </div>
 
         </div>

@@ -144,7 +144,7 @@ namespace DrinkDatabase.Controllers
             var ingredients = db.Ingredients.OrderBy(q => q.Name).ToList();
             SelectList holdThis = new SelectList(ingredients, "ID", "Name", null);
             ViewData.Add("ingredientID", holdThis.AsEnumerable());
-            //ViewBag.SelectedIngredient = holdThis;
+
             return View(drink);
         }
         [HttpPost]
@@ -186,6 +186,36 @@ namespace DrinkDatabase.Controllers
             ViewBag.ingredientName = ingredient.Name;
 
             return PartialView(di);
+        }
+
+        public ActionResult DrinkIngredientEdit(int? id)
+        {
+            if (id == null)
+                return HttpNotFound();
+            DrinkIngredient di = db.DrinkIngredients.Find(id);
+            if (di == null)
+                return HttpNotFound();
+
+            var ingredient = db.Ingredients.Find(di.IngredientID);
+            if (ingredient == null)
+                return HttpNotFound();
+
+            var ingredients = db.Ingredients.OrderBy(q => q.Name).ToList();
+            SelectList holdThis = new SelectList(ingredients, "ID", "Name", di.IngredientID);
+            ViewData.Add("ingredientID", holdThis.AsEnumerable());
+            
+            return PartialView(di);
+        }
+
+        public ActionResult DeleteIngredient(int? DrinkIngredientID, int? DrinkID)
+        {
+            var DI = db.DrinkIngredients.Find(DrinkIngredientID);
+            if (DI == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            db.DrinkIngredients.Remove(DI);
+            db.SaveChanges();
+
+            return RedirectToAction("Edit/" + DrinkID);
         }
 
         protected override void Dispose(bool disposing)

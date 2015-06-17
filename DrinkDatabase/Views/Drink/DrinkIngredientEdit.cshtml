@@ -1,15 +1,24 @@
 ﻿@model DrinkDatabase.Models.DrinkIngredient
 <div class="row">
-    <div class="col-md-2">
+    <div class="col-md-3">
         @Html.EditorFor(model => model.Brand)
+        @Html.ValidationMessageFor(model => model.Brand, "", new { @class = "text-danger" })
     </div>
 
-    <div class="col-md-2">
-        @*TODO: ingredient dropdown*@
-        @ViewBag.ingredientName
+    <div class="col-md-3">
+        @Html.DropDownList("ingredientID", null, htmlAttributes: new { @class = "form-control" })
     </div>
 
-    <div class="col-md-2">
+    <div class="col-md-3">
         @Html.EditorFor(model => model.Amount)
+        @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+    </div>
+    <div class="col-md-1">
+        @using (Html.BeginForm("DeleteIngredient", "Drink"))
+        {
+            @Html.Hidden("DrinkIngredientID", Model.ID);
+            @Html.Hidden("DrinkID", Model.DrinkID);
+            <input type="submit" value="X" class="btn" />
+        }
     </div>
 </div>

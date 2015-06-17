@@ -1,4 +1,6 @@
 ﻿@model DrinkDatabase.Models.Drink
+@using DrinkDatabase.Models;
+@using System.Collections.Generic;
 
 @{
     ViewBag.Title = "Details";
@@ -19,19 +21,18 @@
         <dt>Ingredients</dt>
         <dd>
             @{
-            @:<dl>
                 @:<div class="row"><div class="col-md-4 di-header">Brand</div><div class="col-md-4 di-header">Name</div><div class="col-md-4 di-header">Amount</div></div>
-            HashSet<DrinkDatabase.Models.DrinkIngredient> ings = ViewBag.DrinkIngredients;
-            if (ings.Count > 0)
-            {
-                
-                foreach (var item in ings)
+                HashSet<DrinkIngredient> ings = new HashSet<DrinkIngredient>(
+                    ((IEnumerable<DrinkIngredient>)ViewBag.DrinkIngredients)
+                    .Where(i => i.DrinkID == Model.ID));
+                if (ings.Count > 0)
                 {
-                    @Html.Action("DrinkIngredientDetails", new { id = item.ID });
+                    foreach (var item in ings)
+                    {
+                        @Html.Action("DrinkIngredientDetails", new { id = item.ID });
+                    }
                 }
             }
-            @:</dl>
-        }
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Instructions)

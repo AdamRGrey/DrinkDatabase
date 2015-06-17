@@ -79,11 +79,9 @@ namespace DrinkDatabase.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.DisgustingDebugNote = "no it's fine";
             if (drinkToUpdate.DrinkIngredients == null)
             {
                 drinkToUpdate.DrinkIngredients = new HashSet<DrinkIngredient>();
-                ViewBag.DisgustingDebugNote = "yes I had to add a new set";
             }
             ViewBag.DrinkIngredients = drinkToUpdate.DrinkIngredients;
             return View(drinkToUpdate);
@@ -94,11 +92,16 @@ namespace DrinkDatabase.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "ID,Name,Instructions,Glass,Notes")] Drink drink)
+        public async Task<ActionResult> Edit([Bind(Include = "ID,Name,Instructions,Glass,Notes")] Drink drink,
+            [Bind(Include= "ID,Amount,Brand,IngredientID,DrinkID")] IEnumerable<DrinkIngredient> DrinkIngredients)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(drink).State = EntityState.Modified;
+                if(DrinkIngredients != null)
+                    foreach (var item in DrinkIngredients)
+                        db.Entry(item).State = EntityState.Modified;
+
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -169,7 +172,7 @@ namespace DrinkDatabase.Controllers
             });
             await db.SaveChangesAsync();
 
-            return RedirectToAction("Drink/Edit/" + id);
+            return RedirectToAction("Edit/" + id);
         }
         [AllowAnonymous]
         public ActionResult DrinkIngredientDetails(int? id)
@@ -202,7 +205,7 @@ namespace DrinkDatabase.Controllers
 
             var ingredients = db.Ingredients.OrderBy(q => q.Name).ToList();
             SelectList holdThis = new SelectList(ingredients, "ID", "Name", di.IngredientID);
-            ViewData.Add("ingredientID", holdThis.AsEnumerable());
+            ViewData.Add("DrinkIngredients[" + id + "].ingredientID", holdThis.AsEnumerable());
             
             return PartialView(di);
         }

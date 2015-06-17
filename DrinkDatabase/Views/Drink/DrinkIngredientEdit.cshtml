@@ -1,23 +1,26 @@
 ﻿@model DrinkDatabase.Models.DrinkIngredient
 <div class="row">
+    @Html.Hidden("DrinkIngredients.index", Model.ID)
+    @Html.Hidden("DrinkIngredients[" + Model.ID + "].ID", Model.ID)
+    @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkID", Model.DrinkID)
     <div class="col-md-3">
-        @Html.EditorFor(model => model.Brand)
+        @Html.EditorFor(model => model.Brand, null, "DrinkIngredients[" + Model.ID + "].Brand")
         @Html.ValidationMessageFor(model => model.Brand, "", new { @class = "text-danger" })
     </div>
 
     <div class="col-md-3">
-        @Html.DropDownList("ingredientID", null, htmlAttributes: new { @class = "form-control" })
+        @Html.DropDownList("DrinkIngredients[" + Model.ID + "].ingredientID", null, htmlAttributes: new { @class = "form-control" })
     </div>
 
     <div class="col-md-3">
-        @Html.EditorFor(model => model.Amount)
+        @Html.EditorFor(model => model.Amount, null, "DrinkIngredients[" + Model.ID + "].Amount")
         @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
     </div>
     <div class="col-md-1">
         @using (Html.BeginForm("DeleteIngredient", "Drink"))
         {
-            @Html.Hidden("DrinkIngredientID", Model.ID);
-            @Html.Hidden("DrinkID", Model.DrinkID);
+            @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkIngredientID", Model.ID);
+            @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkID", Model.DrinkID);
             <input type="submit" value="X" class="btn" />
         }
     </div>

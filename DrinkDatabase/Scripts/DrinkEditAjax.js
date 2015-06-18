@@ -16,18 +16,12 @@
    
         var formData = $('#editDrinkForm');
         formData.__RequestVerificationToken =  $('#editDrinkForm input[name="__RequestVerificationToken"]').val(); //there's one in the logout header. Make sure we have the *right* antiforgery token.
-        console.log(formData.serialize())
 
         var x = new XMLHttpRequest();
         x = $.post(window.location, formData.serialize())
         .done(function () {
-            console.log("done");
+            $("#editDrinkContainer").replaceWith($.parseHTML(x.responseText));
         })
-        .fail(function () {
-            console.log(x.responseText);
-        })
-        .always(function(){
-        });
 
     })
 });

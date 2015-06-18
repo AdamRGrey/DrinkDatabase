@@ -6,16 +6,16 @@
 
 <h2>Edit</h2>
 
+<div id="editDrinkContainer">
+    @using (Html.BeginForm("Edit", "Drink", FormMethod.Post, new { id = "editDrinkForm" }))
+    {
+        @Html.AntiForgeryToken()
 
-@using (Html.BeginForm("Edit", "Drink", FormMethod.Post, new { id = "editDrinkForm" }))
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        @Html.Partial("_EditableDrink", Model)
-    </div>
-}
-
+        <div class="form-horizontal">
+            @Html.Partial("_EditableDrink", Model)
+        </div>
+    }
+</div>
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>

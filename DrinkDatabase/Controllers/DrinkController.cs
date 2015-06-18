@@ -115,6 +115,7 @@ namespace DrinkDatabase.Controllers
                     {
                         if(deletionList.Contains(item.ID))
                         {
+                            drink.DrinkIngredients.Remove(item);
                             db.Entry(item).State = EntityState.Deleted;
                         }
                         else
@@ -128,6 +129,7 @@ namespace DrinkDatabase.Controllers
 
                 if (Request.IsAjaxRequest())
                 {
+                    ViewBag.DrinkIngredients = drink.DrinkIngredients;
                     return PartialView("_EditableDrink", drink);
                 }
                 return RedirectToAction("Index");

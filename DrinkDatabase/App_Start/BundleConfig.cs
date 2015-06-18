@@ -28,7 +28,6 @@ namespace DrinkDatabase
                       "~/Content/site.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/ajax").Include(
-                       "~/Scripts/jquery.form*",
                        "~/Scripts/DrinkEditAjax.js"));
         }
     }

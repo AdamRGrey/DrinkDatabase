@@ -87,15 +87,12 @@ namespace DrinkDatabase.Controllers
             return View(drinkToUpdate);
         }
 
-        // POST: Drink/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Drink/Edit/n
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "ID,Name,Instructions,Glass,Notes")] Drink drink,
             [Bind(Include= "ID,Amount,Brand,IngredientID,DrinkID")] IEnumerable<DrinkIngredient> DrinkIngredients)
         {
-            
             if (ModelState.IsValid)
             {
                 var whichToDelete = Request.Form.AllKeys.Where(s => s.Contains("DeleteDrinkIngredients["));
@@ -127,6 +124,12 @@ namespace DrinkDatabase.Controllers
                     }
                 }
                 await db.SaveChangesAsync();
+
+
+                if (Request.IsAjaxRequest())
+                {
+                    return PartialView("_EditableDrink", drink);
+                }
                 return RedirectToAction("Index");
             }
             return View(drink);

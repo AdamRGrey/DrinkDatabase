@@ -19,10 +19,7 @@
         console.log(formData.serialize())
 
         var x = new XMLHttpRequest();
-        x = $.post(window.location,
-            {
-                data: formData.serialize()
-            })
+        x = $.post(window.location, formData.serialize())
         .done(function () {
             console.log("done");
         })

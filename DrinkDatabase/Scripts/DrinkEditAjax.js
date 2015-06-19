@@ -1,11 +1,10 @@
 ﻿function AjaxSave(event) {
-    event.preventDefault();
+    if(event != null)
+        event.preventDefault();
    
     var formData = $('#editDrinkForm');
     formData.__RequestVerificationToken =  $('#editDrinkForm input[name="__RequestVerificationToken"]').val(); //there's one in the logout header. Make sure we have the *right* antiforgery token.
-
-    console.log("we'll be sending this formData.__RequestVerificationToken: " + formData.__RequestVerificationToken);
-
+    
     var x = new XMLHttpRequest();
     x = $.post(window.location, formData.serialize())
     .done(function () {
@@ -15,12 +14,34 @@
         tempSpan.fadeOut(4500, function () {
             tempSpan.remove();
         });
-        $("#editableDrinkSubmitButton").click(AjaxSave);
+
+        clearTimeout(TimerID);
+        eventSetup();
     });
 }
 
-$(document).ready(function () {
-   
+function eventSetup()
+{
+    $("#editableDrinkSubmitButton").off("click.DrinkDatabase");
+    $("#editableDrinkSubmitButton").on("click.DrinkDatabase", AjaxSave);
+
+    $(".autosave-delayed").off("input.DrinkDatabase");
+    $(".autosave-delayed").on("input.DrinkDatabase", startTimeout);
+
+    $(".autosave-delayed-dropdown").off("change.DrinkDatabase");
+    $(".autosave-delayed-dropdown").on("change.DrinkDatabase", AjaxSave);
+}
+
+var TimerID = 0;
+function startTimeout()
+{
+    console.log("restarting timeout, current TimerID = " + TimerID);
+    clearTimeout(TimerID);
+    TimerID = setTimeout(AjaxSave, 1000, null);
+}
+
+$(document).ready(function ()
+{
     $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
         console.log("ajaxerror. Event: ");
         console.log(event);
@@ -32,5 +53,5 @@ $(document).ready(function () {
         console.log(thrownError);
     });
 
-    $("#editableDrinkSubmitButton").click(AjaxSave);
+    eventSetup();
 });

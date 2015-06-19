@@ -5,16 +5,16 @@
     @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkID", Model.DrinkID)
     @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkIngredientID", Model.ID)
     <div class="col-md-3">
-        @Html.EditorFor(model => model.Brand, null, "DrinkIngredients[" + Model.ID + "].Brand")
+        @Html.EditorFor(model => model.Brand, null, "DrinkIngredients[" + Model.ID + "].Brand", new { htmlAttributes = new { @class = "form-control autosave-delayed" } })
         @Html.ValidationMessageFor(model => model.Brand, "", new { @class = "text-danger" })
     </div>
 
     <div class="col-md-3">
-        @Html.DropDownList("DrinkIngredients[" + Model.ID + "].ingredientID", null, htmlAttributes: new { @class = "form-control" })
+        @Html.DropDownList("DrinkIngredients[" + Model.ID + "].ingredientID", null, htmlAttributes: new { @class = "form-control autosave-delayed-dropdown" })
     </div>
 
     <div class="col-md-3">
-        @Html.EditorFor(model => model.Amount, null, "DrinkIngredients[" + Model.ID + "].Amount")
+        @Html.EditorFor(model => model.Amount, null, "DrinkIngredients[" + Model.ID + "].Amount", new {htmlAttributes = new { @class = "form-control autosave-delayed" }})
         @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
     </div>
     <div class="col-md-1">

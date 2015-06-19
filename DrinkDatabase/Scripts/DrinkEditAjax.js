@@ -28,8 +28,8 @@ function eventSetup()
     $(".autosave-delayed").off("input.DrinkDatabase");
     $(".autosave-delayed").on("input.DrinkDatabase", startTimeout);
 
-    $(".autosave-delayed-dropdown").off("change.DrinkDatabase");
-    $(".autosave-delayed-dropdown").on("change.DrinkDatabase", AjaxSave);
+    $(".autosave-delayed-instant").off("change.DrinkDatabase");
+    $(".autosave-delayed-instant").on("change.DrinkDatabase", AjaxSave);
 }
 
 var TimerID = 0;

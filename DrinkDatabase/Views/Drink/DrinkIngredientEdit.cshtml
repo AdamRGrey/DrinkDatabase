@@ -1,5 +1,5 @@
 ﻿@model DrinkDatabase.Models.DrinkIngredient
-<div class="row">
+<div class="DrinkIngredient row">
     @Html.Hidden("DrinkIngredients.index", Model.ID)
     @Html.Hidden("DrinkIngredients[" + Model.ID + "].ID", Model.ID)
     @Html.Hidden("DrinkIngredients[" + Model.ID + "].DrinkID", Model.DrinkID)
@@ -10,7 +10,7 @@
     </div>
 
     <div class="col-md-3">
-        @Html.DropDownList("DrinkIngredients[" + Model.ID + "].ingredientID", null, htmlAttributes: new { @class = "form-control autosave-delayed-dropdown" })
+        @Html.DropDownList("DrinkIngredients[" + Model.ID + "].ingredientID", null, htmlAttributes: new { @class = "form-control autosave-delayed-instant" })
     </div>
 
     <div class="col-md-3">
@@ -18,10 +18,11 @@
         @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
     </div>
     <div class="col-md-1">
-        @Html.Hidden("DeleteDrinkIngredients.index", Model.ID)
         @{
+            Html.Hidden("DeleteDrinkIngredients.index", Model.ID);
             var cbName="DeleteDrinkIngredients[" + Model.ID + "].Value";
             @:<input type="checkbox" name=@cbName />
         }
     </div>
 </div>
+@Scripts.Render("~/bundles/lessRedundant")

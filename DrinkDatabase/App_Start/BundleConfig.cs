@@ -29,6 +29,9 @@ namespace DrinkDatabase
 
             bundles.Add(new ScriptBundle("~/bundles/ajax").Include(
                        "~/Scripts/DrinkEditAjax.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/lessRedundant").Include(
+                       "~/Scripts/RedundantIngredientRemover.js"));
         }
     }
 }

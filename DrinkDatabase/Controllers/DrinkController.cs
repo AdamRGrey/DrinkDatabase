@@ -1,26 +1,38 @@
-﻿using System;
+﻿using DrinkDatabase.Models;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure.AdamExtension;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Mvc;
-using DrinkDatabase.Models;
 
 namespace DrinkDatabase.Controllers
 {
     [Authorize]
     public class DrinkController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private IAppDBContext db;
 
+        /// <summary>
+        /// normal constructor - used for normal runtime.
+        /// </summary>
+        public DrinkController()
+        {
+            db = new ApplicationDbContext();
+        }
+        /// <summary>
+        /// Abnormal constructor. Used for tests. Give it your own <param name="DBC">database context</param>, e.g., a test.
+        /// </summary>
+        public DrinkController(IAppDBContext DBC)
+        {
+            db = DBC;
+        }
         // GET: Drink
         [AllowAnonymous]
         public async Task<ActionResult> Index()
         {
-            return View(await db.Drinks.ToListAsync());
+            return View(await db.Query<Drink>().ToListAsync());
         }
 
         // GET: Drink/Details/5
@@ -31,7 +43,7 @@ namespace DrinkDatabase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Drink drink = await db.Drinks.Include(d => d.DrinkIngredients).Where(d => d.ID == id).SingleAsync();
+            Drink drink = await db.Query<Drink>().Include(d => d.DrinkIngredients).Where(d => d.ID == id).SingleAsync();
             if (drink == null)
             {
                 return HttpNotFound();
@@ -56,7 +68,7 @@ namespace DrinkDatabase.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Drinks.Add(drink);
+                db.Add(drink);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -71,7 +83,7 @@ namespace DrinkDatabase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Drink drinkToUpdate = await db.Drinks
+            Drink drinkToUpdate = await db.Query<Drink>()
                 .Include(d => d.DrinkIngredients)
                 .Where(d => d.ID == id)
                 .SingleAsync();
@@ -144,7 +156,7 @@ namespace DrinkDatabase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Drink drink = await db.Drinks.FindAsync(id);
+            Drink drink = await db.Query<Drink>().FirstAsync(d => d.ID == id);
             if (drink == null)
             {
                 return HttpNotFound();
@@ -157,8 +169,8 @@ namespace DrinkDatabase.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Drink drink = await db.Drinks.FindAsync(id);
-            db.Drinks.Remove(drink);
+            Drink drink = await db.FindAsync<Drink>(id);
+            db.Remove(drink);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
@@ -168,12 +180,12 @@ namespace DrinkDatabase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Drink drink = await db.Drinks.FindAsync(id);
+            Drink drink = await db.FindAsync<Drink>(id.GetValueOrDefault());
             if (drink == null)
             {
                 return HttpNotFound();
             }
-            var ingredients = db.Ingredients.OrderBy(q => q.Name).ToList();
+            var ingredients = db.Query<Ingredient>().OrderBy(q => q.Name).ToList();
             SelectList holdThis = new SelectList(ingredients, "ID", "Name", null);
             ViewData.Add("ingredientID", holdThis.AsEnumerable());
 
@@ -183,11 +195,11 @@ namespace DrinkDatabase.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddIngredient(int id, int ingredientID)
         {
-            Drink drink = await db.Drinks.FindAsync(id);
+            Drink drink = await db.FindAsync<Drink>(id);
             if (drink == null)
                 return HttpNotFound();
 
-            Ingredient ingredient = await db.Ingredients.FirstAsync(i => i.ID == ingredientID);
+            Ingredient ingredient = await db.Query<Ingredient>().FirstAsync(i => i.ID == ingredientID);
             if (ingredient == null)
                 return HttpNotFound();
 
@@ -208,11 +220,11 @@ namespace DrinkDatabase.Controllers
         {
             if (id == null)
                 return HttpNotFound();
-            DrinkIngredient di = db.DrinkIngredients.Find(id);
+            DrinkIngredient di = db.Find<DrinkIngredient>(id.GetValueOrDefault());
             if (di == null)
                 return HttpNotFound();
-            
-            var ingredient = db.Ingredients.Find(di.IngredientID);
+
+            var ingredient = db.Find<Ingredient>(di.IngredientID);
             if (ingredient == null)
                 return HttpNotFound();
             ViewBag.ingredientName = ingredient.Name;
@@ -224,15 +236,15 @@ namespace DrinkDatabase.Controllers
         {
             if (id == null)
                 return HttpNotFound();
-            DrinkIngredient di = db.DrinkIngredients.Find(id);
+            DrinkIngredient di = db.Find<DrinkIngredient>(id.GetValueOrDefault());
             if (di == null)
                 return HttpNotFound();
 
-            var ingredient = db.Ingredients.Find(di.IngredientID);
+            var ingredient = db.Find<Ingredient>(di.IngredientID);
             if (ingredient == null)
                 return HttpNotFound();
 
-            var ingredients = db.Ingredients.OrderBy(q => q.Name).ToList();
+            var ingredients = db.Query<Ingredient>().OrderBy(q => q.Name).ToList();
             SelectList holdThis = new SelectList(ingredients, "ID", "Name", di.IngredientID);
             ViewData.Add("DrinkIngredients[" + id + "].ingredientID", holdThis.AsEnumerable());
             

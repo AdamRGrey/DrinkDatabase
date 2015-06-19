@@ -8,19 +8,36 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DrinkDatabase.Models;
+using System.Data.Entity.Infrastructure.AdamExtension;
 
 namespace DrinkDatabase.Controllers
 {
     [Authorize]
     public class IngredientController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private IAppDBContext db;
+
+        /// <summary>
+        /// normal constructor - used for normal runtime.
+        /// </summary>
+        public IngredientController()
+        {
+            db = new ApplicationDbContext();
+        }
+        
+        /// <summary>
+        /// Abnormal constructor. Used for tests. Give it your own <param name="DBC">database context</param>, e.g., a test.
+        /// </summary>
+        public IngredientController(IAppDBContext DBC)
+        {
+            db = DBC;
+        }
 
         // GET: Ingredient
         [AllowAnonymous]
         public async Task<ActionResult> Index()
         {
-            return View(await db.Ingredients.ToListAsync());
+            return View(await db.Query<Ingredient>().ToListAsync());
         }
 
         // GET: Ingredient/Details/5
@@ -31,7 +48,7 @@ namespace DrinkDatabase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ingredient ingredient = await db.Ingredients.FindAsync(id);
+            Ingredient ingredient = await db.FindAsync<Ingredient>(id.GetValueOrDefault());
             if (ingredient == null)
             {
                 return HttpNotFound();
@@ -54,7 +71,7 @@ namespace DrinkDatabase.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Ingredients.Add(ingredient);
+                db.Add(ingredient);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -69,7 +86,7 @@ namespace DrinkDatabase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ingredient ingredient = await db.Ingredients.FindAsync(id);
+            Ingredient ingredient = await db.FindAsync<Ingredient>(id.GetValueOrDefault());
             if (ingredient == null)
             {
                 return HttpNotFound();
@@ -100,7 +117,7 @@ namespace DrinkDatabase.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ingredient ingredient = await db.Ingredients.FindAsync(id);
+            Ingredient ingredient = await db.FindAsync<Ingredient>(id.GetValueOrDefault());
             if (ingredient == null)
             {
                 return HttpNotFound();
@@ -113,8 +130,8 @@ namespace DrinkDatabase.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Ingredient ingredient = await db.Ingredients.FindAsync(id);
-            db.Ingredients.Remove(ingredient);
+            Ingredient ingredient = await db.FindAsync<Ingredient>(id);
+            db.Remove(ingredient);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }

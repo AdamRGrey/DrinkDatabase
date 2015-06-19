@@ -1,8 +1,9 @@
-﻿using System.Data.Entity;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity.Infrastructure.AdamExtension;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace DrinkDatabase.Models
 {
@@ -18,7 +19,7 @@ namespace DrinkDatabase.Models
         }
     }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDBContext
     {
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
@@ -35,5 +36,39 @@ namespace DrinkDatabase.Models
         public System.Data.Entity.DbSet<DrinkDatabase.Models.Ingredient> Ingredients { get; set; }
 
         public System.Data.Entity.DbSet<DrinkDatabase.Models.DrinkIngredient> DrinkIngredients { get; set; }
+
+        public IQueryable<T> Query<T>() where T : class
+        {
+            return Set<T>();
+        }
+
+        /// <summary>
+        /// Set<<typeparamref name="T"/>>().Add(<paramref name="target"/>)
+        /// </summary>
+        public void Add<T>(T target) where T : class
+        {
+            Set<T>().Add(target);
+        }
+        /// <summary>
+        /// Set<<typeparamref name="T"/>>().Remove(<paramref name="target"/>)
+        /// </summary>
+        public void Remove<T>(T target) where T : class
+        {
+            Set<T>().Remove(target);
+        }
+        /// <summary>
+        /// Set<<typeparamref name="T"/>>().Find(<paramref name="id"/>)
+        /// </summary>
+        public T Find<T>(int id) where T : class
+        {
+            return Set<T>().Find(id);
+        }
+        /// <summary>
+        /// Set<<typeparamref name="T"/>>().FindAsync(<paramref name="id"/>)
+        /// </summary>
+        public Task<T> FindAsync<T>(int id) where T : class
+        {
+            return Set<T>().FindAsync(id);
+        }
     }
 }

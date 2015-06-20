@@ -59,16 +59,16 @@ namespace DrinkDatabase.Models
         /// <summary>
         /// Set<<typeparamref name="T"/>>().Find(<paramref name="id"/>)
         /// </summary>
-        public T Find<T>(int id) where T : class
+        public T Find<T>(params object[] keyValues) where T : class
         {
-            return Set<T>().Find(id);
+            return Set<T>().Find(keyValues);
         }
         /// <summary>
-        /// Set<<typeparamref name="T"/>>().FindAsync(<paramref name="id"/>)
+        /// Set<<typeparamref name="T"/>>().FindAsync(<paramref name="keyValues"/>)
         /// </summary>
-        public Task<T> FindAsync<T>(int id) where T : class
+        public Task<T> FindAsync<T>(params object[] keyValues) where T : class
         {
-            return Set<T>().FindAsync(id);
+            return Set<T>().FindAsync(keyValues);
         }
     }
 }

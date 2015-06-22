@@ -15,7 +15,6 @@ namespace System.Data.Entity.Infrastructure.AdamExtension
         DbEntityEntry Entry(object entity);
 
         //Convenience methods
-
         void Add<T>(T target) where T : class;
         void Remove<T>(T target) where T : class;
         T Find<T>(params object[] keyValues) where T : class;

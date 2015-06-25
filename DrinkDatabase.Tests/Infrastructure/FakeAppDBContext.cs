@@ -16,6 +16,10 @@ namespace DrinkDatabase.Tests.Infrastructure
 
         public IQueryable<T> Query<T>() where T : class
         {
+            if(!Set.ContainsKey(typeof(T)))
+            {
+                Set[typeof(T)] = new List<T>();
+            }
             return (Set[typeof(T)] as List<T>).AsQueryable<T>();
         }
         public DbEntityEntry Entry(object entity)

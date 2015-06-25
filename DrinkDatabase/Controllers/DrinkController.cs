@@ -170,6 +170,8 @@ namespace DrinkDatabase.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Drink drink = await db.FindAsync<Drink>(id);
+            if (drink == null)
+                return HttpNotFound("couldn't find the drink to remove");
             db.Remove(drink);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
@@ -199,12 +201,13 @@ namespace DrinkDatabase.Controllers
             if (drink == null)
                 return HttpNotFound();
 
-            Ingredient ingredient = await db.Query<Ingredient>().FirstAsync(i => i.ID == ingredientID);
+            Ingredient ingredient = db.Query<Ingredient>().First(i => i.ID == ingredientID);
             if (ingredient == null)
                 return HttpNotFound();
-
+            if (drink.DrinkIngredients == null)
+                drink.DrinkIngredients = new HashSet<DrinkIngredient>();
             if (drink.DrinkIngredients.Any(di => di.IngredientID == ingredient.ID))
-                return new HttpStatusCodeResult(HttpStatusCode.Conflict);
+                    return new HttpStatusCodeResult(HttpStatusCode.Conflict);
 
             drink.DrinkIngredients.Add(new DrinkIngredient()
             {
@@ -258,6 +261,11 @@ namespace DrinkDatabase.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public Task<ActionResult> RemoveIngredient(int p1, int p2)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

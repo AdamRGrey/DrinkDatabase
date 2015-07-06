@@ -15,5 +15,13 @@ namespace DrinkDatabase.Models
         public int ID { get; set; }
 
         public string Name { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if(!(obj is Ingredient))
+                return base.Equals(obj);
+            Ingredient i = (Ingredient)(obj);
+            return ID == i.ID && Name == i.Name;
+        }
     }
 }

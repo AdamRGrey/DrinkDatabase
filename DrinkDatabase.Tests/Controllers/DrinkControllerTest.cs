@@ -127,11 +127,12 @@ namespace DrinkDatabase.Tests.Controllers
             result = dc.AddIngredient(d.ID, i.ID);
             result.Wait();
 
-            Assert.IsInstanceOfType(result.Result, (new HttpStatusCodeResult(HttpStatusCode.BadRequest)).GetType());
+            Assert.IsInstanceOfType(result.Result, typeof(HttpStatusCodeResult));
+            Assert.IsTrue((result.Result as HttpStatusCodeResult).StatusCode == (int)HttpStatusCode.BadRequest);
             if(d.DrinkIngredients != null)
             {
                 Assert.IsFalse(d.DrinkIngredients.Where(di => i.ID == di.IngredientID) != null);
-            }
+            } 
             Assert.IsNull(db.Query<DrinkIngredient>().Where(di => di.IngredientID == i.ID));
         }
         [TestMethod]

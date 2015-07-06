@@ -208,7 +208,8 @@ namespace DrinkDatabase.Controllers
                 drink.DrinkIngredients = new HashSet<DrinkIngredient>();
             if (drink.DrinkIngredients.Any(di => di.IngredientID == ingredient.ID))
                     return new HttpStatusCodeResult(HttpStatusCode.Conflict);
-
+            
+            //conundrum. Either rewrite this to avoid using a feature so I can test it, or get rhinomocks (or something) involved.
             drink.DrinkIngredients.Add(new DrinkIngredient()
             {
                 DrinkID = id,
